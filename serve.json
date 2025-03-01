@@ -1,24 +1,31 @@
 {
   "public": ".",
-  "trailingSlash": true,
-  "rewrites": [
-    { "source": "**", "destination": "/index.html" }
-  ],
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "directoryListing": false,
   "headers": [
     {
       "source": "**/*.js",
       "headers": [
-        { "key": "Cache-Control", "value": "max-age=0" }
+        { "key": "Cache-Control", "value": "no-cache" }
       ]
     },
     {
       "source": "**/*.css",
       "headers": [
-        { "key": "Cache-Control", "value": "max-age=0" }
+        { "key": "Cache-Control", "value": "no-cache" }
+      ]
+    },
+    {
+      "source": "**/*.html",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache" }
       ]
     }
   ],
-  "directoryListing": false,
+  "rewrites": [
+    { "source": "**", "destination": "/index.html" }
+  ],
   "unlisted": [
     ".git",
     ".gitignore"

@@ -4,17 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Learn Database Normalization</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <!-- Use relative path for CSS -->
+    <link rel="stylesheet" href="css/styles.css">
     <!-- Error handling for CSS loading -->
     <script>
         window.addEventListener('error', function(e) {
             if (e.target.tagName === 'LINK' || e.target.tagName === 'SCRIPT') {
                 console.error('Failed to load resource:', e.target.src || e.target.href);
                 if (e.target.tagName === 'LINK') {
-                    // Try to load CSS again with fallback path
+                    // Try to load CSS again with alternate path
+                    var href = e.target.href;
+                    var fileName = href.substring(href.lastIndexOf('/') + 1);
                     var fallbackLink = document.createElement('link');
                     fallbackLink.rel = 'stylesheet';
-                    fallbackLink.href = e.target.href.replace(/^\//, '');
+                    fallbackLink.href = 'css/' + fileName;
                     document.head.appendChild(fallbackLink);
                 }
             }
@@ -237,65 +240,501 @@
         </div>
     </footer>
 
-    <!-- Script loading with error handling -->
+    <!-- Inline the essential table data -->
     <script>
-        function loadScript(src, callback) {
-            console.log('Attempting to load script:', src);
-            var script = document.createElement('script');
-            script.src = src;
-            script.onload = function() {
-                console.log('Successfully loaded script:', src);
-                if (callback) callback();
-            };
-            script.onerror = function() {
-                console.error('Failed to load script:', src);
-                // Try multiple fallback paths
-                var fallbacks = [
-                    src.replace(/^\//, ''),  // Remove leading slash
-                    'js/' + src.split('/').pop(),  // Try in js/ folder
-                    'data/' + src.split('/').pop(), // Try in data/ folder
-                    src.split('/').pop()  // Just the filename
-                ];
-                
-                console.log('Trying fallbacks:', fallbacks);
-                tryNextFallback(fallbacks, 0, callback);
-            };
-            document.body.appendChild(script);
-        }
+        // Preload the examples.js content directly
+        window.tableData = {
+            // 1NF Examples
+            non1NF: {
+                headers: ['StudentID', 'Name', 'Courses'],
+                rows: [
+                    ['1', 'John', 'Math, Physics, Chemistry'],
+                    ['2', 'Sarah', 'Biology, English'],
+                    ['3', 'Mike', 'Computer Science, Statistics']
+                ]
+            },
+            
+            firstNF: {
+                headers: ['StudentID', 'Name', 'Course'],
+                rows: [
+                    ['1', 'John', 'Math'],
+                    ['1', 'John', 'Physics'],
+                    ['1', 'John', 'Chemistry'],
+                    ['2', 'Sarah', 'Biology'],
+                    ['2', 'Sarah', 'English'],
+                    ['3', 'Mike', 'Computer Science'],
+                    ['3', 'Mike', 'Statistics']
+                ]
+            },
+            
+            // 2NF Examples
+            non2NF: {
+                headers: ['OrderID', 'ProductID', 'ProductName', 'Quantity', 'CustomerID', 'CustomerName'],
+                rows: [
+                    ['1', 'P1', 'Laptop', '2', 'C1', 'John'],
+                    ['1', 'P2', 'Mouse', '1', 'C1', 'John'],
+                    ['2', 'P1', 'Laptop', '1', 'C2', 'Sarah'],
+                    ['3', 'P3', 'Keyboard', '3', 'C1', 'John']
+                ]
+            },
+            
+            secondNFOrders: {
+                headers: ['OrderID', 'CustomerID'],
+                rows: [
+                    ['1', 'C1'],
+                    ['2', 'C2'],
+                    ['3', 'C1']
+                ]
+            },
+            
+            secondNFOrderDetails: {
+                headers: ['OrderID', 'ProductID', 'Quantity'],
+                rows: [
+                    ['1', 'P1', '2'],
+                    ['1', 'P2', '1'],
+                    ['2', 'P1', '1'],
+                    ['3', 'P3', '3']
+                ]
+            },
+            
+            secondNFProducts: {
+                headers: ['ProductID', 'ProductName'],
+                rows: [
+                    ['P1', 'Laptop'],
+                    ['P2', 'Mouse'],
+                    ['P3', 'Keyboard']
+                ]
+            },
+            
+            secondNFCustomers: {
+                headers: ['CustomerID', 'CustomerName'],
+                rows: [
+                    ['C1', 'John'],
+                    ['C2', 'Sarah']
+                ]
+            },
+            
+            // 3NF Examples
+            non3NF: {
+                headers: ['EmployeeID', 'Department', 'DepartmentHead'],
+                rows: [
+                    ['E1', 'Sales', 'John Smith'],
+                    ['E2', 'Sales', 'John Smith'],
+                    ['E3', 'Marketing', 'Sarah Johnson'],
+                    ['E4', 'IT', 'Mike Williams'],
+                    ['E5', 'IT', 'Mike Williams']
+                ]
+            },
+            
+            thirdNFEmployees: {
+                headers: ['EmployeeID', 'Department'],
+                rows: [
+                    ['E1', 'Sales'],
+                    ['E2', 'Sales'],
+                    ['E3', 'Marketing'],
+                    ['E4', 'IT'],
+                    ['E5', 'IT']
+                ]
+            },
+            
+            thirdNFDepartments: {
+                headers: ['Department', 'DepartmentHead'],
+                rows: [
+                    ['Sales', 'John Smith'],
+                    ['Marketing', 'Sarah Johnson'],
+                    ['IT', 'Mike Williams']
+                ]
+            },
+            
+            // Comprehensive Example
+            unnormalized: {
+                headers: ['InvoiceID', 'CustomerName', 'CustomerAddress', 'ProductID', 'ProductName', 'Category', 'Price', 'Quantity', 'Total'],
+                rows: [
+                    ['1001', 'John Doe', '123 Main St, NY', 'P1', 'Laptop', 'Electronics', '1200', '1', '1200'],
+                    ['1001', 'John Doe', '123 Main St, NY', 'P2', 'Mouse', 'Accessories', '25', '2', '50'],
+                    ['1002', 'Jane Smith', '456 Oak Ave, CA', 'P3', 'Keyboard', 'Accessories', '45', '1', '45'],
+                    ['1003', 'Bob Johnson', '789 Pine Rd, TX', 'P1', 'Laptop', 'Electronics', '1200', '1', '1200'],
+                    ['1003', 'Bob Johnson', '789 Pine Rd, TX', 'P4', 'Monitor', 'Electronics', '200', '2', '400']
+                ]
+            },
+            
+            comp2NFInvoices: {
+                headers: ['InvoiceID', 'CustomerName', 'CustomerAddress'],
+                rows: [
+                    ['1001', 'John Doe', '123 Main St, NY'],
+                    ['1002', 'Jane Smith', '456 Oak Ave, CA'],
+                    ['1003', 'Bob Johnson', '789 Pine Rd, TX']
+                ]
+            },
+            
+            comp2NFInvoiceDetails: {
+                headers: ['InvoiceID', 'ProductID', 'Quantity', 'Total'],
+                rows: [
+                    ['1001', 'P1', '1', '1200'],
+                    ['1001', 'P2', '2', '50'],
+                    ['1002', 'P3', '1', '45'],
+                    ['1003', 'P1', '1', '1200'],
+                    ['1003', 'P4', '2', '400']
+                ]
+            },
+            
+            comp2NFProducts: {
+                headers: ['ProductID', 'ProductName', 'Category', 'Price'],
+                rows: [
+                    ['P1', 'Laptop', 'Electronics', '1200'],
+                    ['P2', 'Mouse', 'Accessories', '25'],
+                    ['P3', 'Keyboard', 'Accessories', '45'],
+                    ['P4', 'Monitor', 'Electronics', '200']
+                ]
+            },
+            
+            comp3NFProducts: {
+                headers: ['ProductID', 'ProductName', 'CategoryID', 'Price'],
+                rows: [
+                    ['P1', 'Laptop', 'C1', '1200'],
+                    ['P2', 'Mouse', 'C2', '25'],
+                    ['P3', 'Keyboard', 'C2', '45'],
+                    ['P4', 'Monitor', 'C1', '200']
+                ]
+            },
+            
+            comp3NFCategories: {
+                headers: ['CategoryID', 'CategoryName'],
+                rows: [
+                    ['C1', 'Electronics'],
+                    ['C2', 'Accessories']
+                ]
+            },
+            
+            comp3NFCustomers: {
+                headers: ['CustomerID', 'CustomerName', 'CustomerAddress'],
+                rows: [
+                    ['C1', 'John Doe', '123 Main St, NY'],
+                    ['C2', 'Jane Smith', '456 Oak Ave, CA'],
+                    ['C3', 'Bob Johnson', '789 Pine Rd, TX']
+                ]
+            },
+            
+            comp3NFInvoices: {
+                headers: ['InvoiceID', 'CustomerID'],
+                rows: [
+                    ['1001', 'C1'],
+                    ['1002', 'C2'],
+                    ['1003', 'C3']
+                ]
+            }
+        };
         
-        function tryNextFallback(fallbacks, index, callback) {
-            if (index >= fallbacks.length) {
-                console.error('All fallbacks failed');
-                // Mark all table-editor divs as having an error
-                document.querySelectorAll('.table-editor').forEach(function(div) {
-                    div.classList.add('error');
-                });
-                return;
+        // Store original data for reset functionality
+        window.originalTableData = JSON.parse(JSON.stringify(window.tableData));
+    </script>
+
+    <!-- Inline the TableEditor class directly -->
+    <script>
+        /**
+         * Table Editor - Creates editable tables and manages their state
+         */
+        class TableEditor {
+            constructor(containerId, tableData) {
+                this.container = document.getElementById(containerId);
+                this.tableData = tableData;
+                this.headers = tableData.headers;
+                this.rows = JSON.parse(JSON.stringify(tableData.rows)); // Deep copy
+                this.render();
             }
             
-            var fallbackSrc = fallbacks[index];
-            console.log('Trying fallback path:', fallbackSrc);
-            
-            var script = document.createElement('script');
-            script.src = fallbackSrc;
-            script.onload = function() {
-                console.log('Successfully loaded fallback script:', fallbackSrc);
-                if (callback) callback();
-            };
-            script.onerror = function() {
-                console.error('Fallback failed:', fallbackSrc);
-                tryNextFallback(fallbacks, index + 1, callback);
-            };
-            document.body.appendChild(script);
-        }
-
-        // Load scripts in the correct order
-        loadScript('/data/examples.js', function() {
-            loadScript('/js/tableEditor.js', function() {
-                loadScript('/js/main.js', function() {
-                    console.log('All scripts loaded successfully!');
+            render() {
+                // Clear container
+                this.container.innerHTML = '';
+                
+                // Create table
+                const table = document.createElement('table');
+                
+                // Create header
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                
+                this.headers.forEach(header => {
+                    const th = document.createElement('th');
+                    th.textContent = header;
+                    headerRow.appendChild(th);
                 });
-            });
+                
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+                
+                // Create body
+                const tbody = document.createElement('tbody');
+                
+                this.rows.forEach((row, rowIndex) => {
+                    const tr = document.createElement('tr');
+                    
+                    row.forEach((cell, cellIndex) => {
+                        const td = document.createElement('td');
+                        td.textContent = cell;
+                        td.classList.add('editable');
+                        td.dataset.row = rowIndex;
+                        td.dataset.col = cellIndex;
+                        td.dataset.header = this.headers[cellIndex]; // Store header name for validation
+                        td.addEventListener('click', () => this.startEditing(td, cell));
+                        tr.appendChild(td);
+                    });
+                    
+                    tbody.appendChild(tr);
+                });
+                
+                table.appendChild(tbody);
+                this.container.appendChild(table);
+            }
+            
+            startEditing(cell, value) {
+                // Create input element
+                const input = document.createElement('input');
+                input.value = value;
+                input.type = 'text';
+                
+                // Replace cell content with input
+                cell.textContent = '';
+                cell.classList.add('editing');
+                cell.appendChild(input);
+                
+                // Focus input
+                input.focus();
+                
+                // Handle input events
+                input.addEventListener('blur', () => this.finishEditing(cell, input));
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        this.finishEditing(cell, input);
+                    } else if (e.key === 'Escape') {
+                        this.cancelEditing(cell, value);
+                    }
+                });
+            }
+            
+            finishEditing(cell, input) {
+                const newValue = input.value.trim();
+                const rowIndex = parseInt(cell.dataset.row);
+                const colIndex = parseInt(cell.dataset.col);
+                const headerName = cell.dataset.header;
+                
+                // Validate input based on SQL rules
+                const validationResult = this.validateSqlInput(newValue, headerName);
+                
+                if (!validationResult.valid) {
+                    // Show error message
+                    this.showValidationError(cell, validationResult.message);
+                    return;
+                }
+                
+                // Update data
+                this.rows[rowIndex][colIndex] = newValue;
+                
+                // Update cell
+                cell.textContent = newValue;
+                cell.classList.remove('editing');
+                
+                // Remove any error messages
+                this.removeValidationError(cell);
+            }
+            
+            validateSqlInput(value, headerName) {
+                // Check for double quotes in table/column names
+                if ((headerName.includes('ID') || 
+                    headerName.includes('Name') || 
+                    headerName.includes('Table') || 
+                    headerName === 'Department' || 
+                    headerName === 'Category' || 
+                    headerName === 'Course') && 
+                    value.includes('"')) {
+                    return {
+                        valid: false,
+                        message: 'SQL identifiers should not use double quotes ("")'
+                    };
+                }
+                
+                // Check for SQL reserved words
+                const reservedWords = ['SELECT', 'FROM', 'WHERE', 'INSERT', 'UPDATE', 'DELETE', 
+                                    'CREATE', 'ALTER', 'DROP', 'TABLE', 'DATABASE', 'INDEX'];
+                
+                if (reservedWords.includes(value.toUpperCase()) && 
+                    (headerName.includes('ID') || headerName.includes('Name'))) {
+                    return {
+                        valid: false,
+                        message: `"${value}" is a SQL reserved word and cannot be used as an identifier`
+                    };
+                }
+                
+                // Check for special characters in identifiers
+                if ((headerName.includes('ID') || headerName.includes('Name')) && 
+                    /[^a-zA-Z0-9_]/.test(value) && value !== '') {
+                    return {
+                        valid: false,
+                        message: 'Identifiers should only contain letters, numbers, and underscores'
+                    };
+                }
+                
+                return { valid: true };
+            }
+            
+            showValidationError(cell, message) {
+                // Remove any existing error message
+                this.removeValidationError(cell);
+                
+                // Create error message element
+                const errorElement = document.createElement('div');
+                errorElement.classList.add('validation-error');
+                errorElement.textContent = message;
+                
+                // Insert after the cell
+                cell.parentNode.insertBefore(errorElement, cell.nextSibling);
+                
+                // Highlight the cell
+                cell.classList.add('error');
+                
+                // Keep the cell in editing mode
+                const input = cell.querySelector('input');
+                if (input) {
+                    input.focus();
+                }
+            }
+            
+            removeValidationError(cell) {
+                // Remove error class from cell
+                cell.classList.remove('error');
+                
+                // Find and remove error message
+                const row = cell.parentNode;
+                const errorElement = row.querySelector('.validation-error');
+                if (errorElement) {
+                    row.removeChild(errorElement);
+                }
+            }
+            
+            cancelEditing(cell, originalValue) {
+                cell.textContent = originalValue;
+                cell.classList.remove('editing');
+                this.removeValidationError(cell);
+            }
+            
+            reset() {
+                // Get the original data for this table
+                const originalId = this.container.id.replace('-table', '');
+                const originalData = window.originalTableData[originalId];
+                
+                // Reset data
+                this.rows = JSON.parse(JSON.stringify(originalData.rows));
+                
+                // Re-render
+                this.render();
+            }
+        }
+    </script>
+
+    <!-- Initialize tables -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, initializing tables...');
+            try {
+                // Create 1NF tables
+                const non1NFTable = new TableEditor('non-1nf-table', window.tableData.non1NF);
+                const firstNFTable = new TableEditor('1nf-table', window.tableData.firstNF);
+                
+                // Create 2NF tables
+                const non2NFTable = new TableEditor('non-2nf-table', window.tableData.non2NF);
+                const secondNFOrdersTable = new TableEditor('2nf-orders-table', window.tableData.secondNFOrders);
+                const secondNFOrderDetailsTable = new TableEditor('2nf-order-details-table', window.tableData.secondNFOrderDetails);
+                const secondNFProductsTable = new TableEditor('2nf-products-table', window.tableData.secondNFProducts);
+                const secondNFCustomersTable = new TableEditor('2nf-customers-table', window.tableData.secondNFCustomers);
+                
+                // Create 3NF tables
+                const non3NFTable = new TableEditor('non-3nf-table', window.tableData.non3NF);
+                const thirdNFEmployeesTable = new TableEditor('3nf-employees-table', window.tableData.thirdNFEmployees);
+                const thirdNFDepartmentsTable = new TableEditor('3nf-departments-table', window.tableData.thirdNFDepartments);
+                
+                // Create comprehensive example tables
+                const unnormalizedTable = new TableEditor('unnormalized-table', window.tableData.unnormalized);
+                const comp2NFInvoicesTable = new TableEditor('comp-2nf-invoices-table', window.tableData.comp2NFInvoices);
+                const comp2NFInvoiceDetailsTable = new TableEditor('comp-2nf-invoice-details-table', window.tableData.comp2NFInvoiceDetails);
+                const comp2NFProductsTable = new TableEditor('comp-2nf-products-table', window.tableData.comp2NFProducts);
+                const comp3NFProductsTable = new TableEditor('comp-3nf-products-table', window.tableData.comp3NFProducts);
+                const comp3NFCategoriesTable = new TableEditor('comp-3nf-categories-table', window.tableData.comp3NFCategories);
+                const comp3NFCustomersTable = new TableEditor('comp-3nf-customers-table', window.tableData.comp3NFCustomers);
+                const comp3NFInvoicesTable = new TableEditor('comp-3nf-invoices-table', window.tableData.comp3NFInvoices);
+                
+                // Store all tables in a map for easy access
+                const tables = {
+                    '1nf': [firstNFTable],
+                    '2nf': [secondNFOrdersTable, secondNFOrderDetailsTable, secondNFProductsTable, secondNFCustomersTable],
+                    '3nf': [thirdNFEmployeesTable, thirdNFDepartmentsTable],
+                    'comp': [
+                        comp2NFInvoicesTable, comp2NFInvoiceDetailsTable, comp2NFProductsTable,
+                        comp3NFProductsTable, comp3NFCategoriesTable, comp3NFCustomersTable, comp3NFInvoicesTable
+                    ]
+                };
+                
+                // Add event listeners to reset buttons
+                document.querySelectorAll('.reset-btn').forEach(button => {
+                    button.addEventListener('click', () => {
+                        const tableGroup = button.dataset.table;
+                        tables[tableGroup].forEach(table => table.reset());
+                    });
+                });
+
+                // Add SQL help buttons to each example container
+                document.querySelectorAll('.example-container').forEach(container => {
+                    const helpBtn = document.createElement('div');
+                    helpBtn.classList.add('sql-help-btn');
+                    helpBtn.textContent = '?';
+                    helpBtn.title = 'SQL Rules Help';
+                    
+                    helpBtn.addEventListener('click', () => {
+                        // Create tooltip
+                        const tooltip = document.createElement('div');
+                        tooltip.classList.add('sql-help-tooltip');
+                        tooltip.innerHTML = `
+                            <h4>SQL Naming Rules:</h4>
+                            <ul>
+                                <li>No double quotes in identifiers</li>
+                                <li>No SQL reserved words (SELECT, FROM, etc.)</li>
+                                <li>Use only letters, numbers, and underscores</li>
+                                <li>Names should be descriptive and meaningful</li>
+                                <li>Primary keys should be properly defined</li>
+                                <li>Foreign keys should reference primary keys</li>
+                            </ul>
+                        `;
+                        
+                        // Add close button
+                        const closeBtn = document.createElement('button');
+                        closeBtn.textContent = 'Close';
+                        closeBtn.addEventListener('click', () => {
+                            container.removeChild(tooltip);
+                        });
+                        tooltip.appendChild(closeBtn);
+                        
+                        // Add to container
+                        container.appendChild(tooltip);
+                        
+                        // Auto-close after 10 seconds
+                        setTimeout(() => {
+                            if (container.contains(tooltip)) {
+                                container.removeChild(tooltip);
+                            }
+                        }, 10000);
+                    });
+                    
+                    container.style.position = 'relative';
+                    container.appendChild(helpBtn);
+                });
+                
+                console.log('All tables initialized successfully!');
+            } catch (error) {
+                console.error('Error initializing tables:', error);
+                document.querySelectorAll('.table-editor').forEach(div => {
+                    div.classList.add('error');
+                    div.textContent = 'Error initializing tables: ' + error.message;
+                });
+            }
         });
     </script>
 </body>

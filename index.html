@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn Database Normalization</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Database Normalization</h1>
+            <p>An interactive guide to understanding 1NF, 2NF, and 3NF</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="introduction">
+            <h2>Introduction to Normalization</h2>
+            <p>Normalization is a database design technique that reduces data redundancy and eliminates undesirable characteristics like Insertion, Update, and Deletion Anomalies. Normalization rules divide larger tables into smaller tables and link them using relationships.</p>
+        </section>
+
+        <section id="first-normal-form">
+            <h2>First Normal Form (1NF)</h2>
+            <p>A relation is in 1NF if:</p>
+            <ul>
+                <li>It contains only atomic (indivisible) values</li>
+                <li>There are no repeating groups or arrays</li>
+                <li>All entries in a column are of the same domain</li>
+            </ul>
+
+            <div class="example-container">
+                <h3>Example: Non-1NF Table</h3>
+                <p>This table violates 1NF because the Courses column contains multiple values:</p>
+                
+                <div class="table-editor" id="non-1nf-table">
+                    <!-- Table will be inserted by JavaScript -->
+                </div>
+
+                <h3>Converting to 1NF</h3>
+                <p>To convert to 1NF, we need to make all values atomic:</p>
+                
+                <div class="table-editor" id="1nf-table">
+                    <!-- Table will be inserted by JavaScript -->
+                </div>
+                
+                <button class="reset-btn" data-table="1nf">Reset Table</button>
+            </div>
+        </section>
+
+        <section id="second-normal-form">
+            <h2>Second Normal Form (2NF)</h2>
+            <p>A relation is in 2NF if:</p>
+            <ul>
+                <li>It is in 1NF</li>
+                <li>All non-key attributes are fully functionally dependent on the primary key</li>
+            </ul>
+
+            <div class="example-container">
+                <h3>Example: Non-2NF Table</h3>
+                <p>This table violates 2NF because some attributes depend only on part of the composite key:</p>
+                
+                <div class="table-editor" id="non-2nf-table">
+                    <!-- Table will be inserted by JavaScript -->
+                </div>
+
+                <h3>Converting to 2NF</h3>
+                <p>To convert to 2NF, we create separate tables:</p>
+                
+                <div class="tables-container">
+                    <div>
+                        <h4>Orders Table</h4>
+                        <div class="table-editor" id="2nf-orders-table">
+                            <!-- Table will be inserted by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4>OrderDetails Table</h4>
+                        <div class="table-editor" id="2nf-order-details-table">
+                            <!-- Table will be inserted by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4>Products Table</h4>
+                        <div class="table-editor" id="2nf-products-table">
+                            <!-- Table will be inserted by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4>Customers Table</h4>
+                        <div class="table-editor" id="2nf-customers-table">
+                            <!-- Table will be inserted by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="reset-btn" data-table="2nf">Reset Tables</button>
+            </div>
+        </section>
+
+        <section id="third-normal-form">
+            <h2>Third Normal Form (3NF)</h2>
+            <p>A relation is in 3NF if:</p>
+            <ul>
+                <li>It is in 2NF</li>
+                <li>All non-key attributes are non-transitively dependent on the primary key</li>
+            </ul>
+
+            <div class="example-container">
+                <h3>Example: Non-3NF Table</h3>
+                <p>This table violates 3NF because of transitive dependencies:</p>
+                
+                <div class="table-editor" id="non-3nf-table">
+                    <!-- Table will be inserted by JavaScript -->
+                </div>
+
+                <h3>Converting to 3NF</h3>
+                <p>To convert to 3NF, we remove transitive dependencies:</p>
+                
+                <div class="tables-container">
+                    <div>
+                        <h4>Employees Table</h4>
+                        <div class="table-editor" id="3nf-employees-table">
+                            <!-- Table will be inserted by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4>Departments Table</h4>
+                        <div class="table-editor" id="3nf-departments-table">
+                            <!-- Table will be inserted by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="reset-btn" data-table="3nf">Reset Tables</button>
+            </div>
+        </section>
+
+        <section id="comprehensive-example">
+            <h2>Comprehensive Example</h2>
+            <p>Let's work through a complete example from unnormalized to 3NF:</p>
+
+            <div class="example-container">
+                <h3>Unnormalized Table</h3>
+                
+                <div class="table-editor" id="unnormalized-table">
+                    <!-- Table will be inserted by JavaScript -->
+                </div>
+
+                <h3>First Normal Form (1NF)</h3>
+                <p>The table is already in 1NF as all values are atomic.</p>
+
+                <h3>Second Normal Form (2NF)</h3>
+                
+                <div class="tables-container">
+                    <div>
+                        <h4>Invoices Table</h4>
+                        <div class="table-editor" id="comp-2nf-invoices-table">
+                            <!-- Table will be inserted by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4>InvoiceDetails Table</h4>
+                        <div class="table-editor" id="comp-2nf-invoice-details-table">
+                            <!-- Table will be inserted by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4>Products Table</h4>
+                        <div class="table-editor" id="comp-2nf-products-table">
+                            <!-- Table will be inserted by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Third Normal Form (3NF)</h3>
+                
+                <div class="tables-container">
+                    <div>
+                        <h4>Products Table</h4>
+                        <div class="table-editor" id="comp-3nf-products-table">
+                            <!-- Table will be inserted by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4>Categories Table</h4>
+                        <div class="table-editor" id="comp-3nf-categories-table">
+                            <!-- Table will be inserted by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4>Customers Table</h4>
+                        <div class="table-editor" id="comp-3nf-customers-table">
+                            <!-- Table will be inserted by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4>Invoices Table</h4>
+                        <div class="table-editor" id="comp-3nf-invoices-table">
+                            <!-- Table will be inserted by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="reset-btn" data-table="comp">Reset All Tables</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 Database Normalization Learning Tool</p>
+        </div>
+    </footer>
+
+    <script src="data/examples.js"></script>
+    <script src="js/tableEditor.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html> 

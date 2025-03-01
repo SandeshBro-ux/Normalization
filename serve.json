@@ -8,14 +8,19 @@
     {
       "source": "**/*.js",
       "headers": [
-        { "key": "Cache-Control", "value": "max-age=3600" }
+        { "key": "Cache-Control", "value": "max-age=0" }
       ]
     },
     {
       "source": "**/*.css",
       "headers": [
-        { "key": "Cache-Control", "value": "max-age=3600" }
+        { "key": "Cache-Control", "value": "max-age=0" }
       ]
     }
+  ],
+  "directoryListing": false,
+  "unlisted": [
+    ".git",
+    ".gitignore"
   ]
 } 

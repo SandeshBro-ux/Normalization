@@ -240,22 +240,51 @@
     <!-- Script loading with error handling -->
     <script>
         function loadScript(src, callback) {
+            console.log('Attempting to load script:', src);
             var script = document.createElement('script');
             script.src = src;
-            script.onload = callback;
+            script.onload = function() {
+                console.log('Successfully loaded script:', src);
+                if (callback) callback();
+            };
             script.onerror = function() {
                 console.error('Failed to load script:', src);
-                // Try fallback path without leading slash
-                var fallbackSrc = src.replace(/^\//, '');
-                if (fallbackSrc !== src) {
-                    console.log('Trying fallback path:', fallbackSrc);
-                    loadScript(fallbackSrc, callback);
-                } else {
-                    // Mark all table-editor divs as having an error
-                    document.querySelectorAll('.table-editor').forEach(function(div) {
-                        div.classList.add('error');
-                    });
-                }
+                // Try multiple fallback paths
+                var fallbacks = [
+                    src.replace(/^\//, ''),  // Remove leading slash
+                    'js/' + src.split('/').pop(),  // Try in js/ folder
+                    'data/' + src.split('/').pop(), // Try in data/ folder
+                    src.split('/').pop()  // Just the filename
+                ];
+                
+                console.log('Trying fallbacks:', fallbacks);
+                tryNextFallback(fallbacks, 0, callback);
+            };
+            document.body.appendChild(script);
+        }
+        
+        function tryNextFallback(fallbacks, index, callback) {
+            if (index >= fallbacks.length) {
+                console.error('All fallbacks failed');
+                // Mark all table-editor divs as having an error
+                document.querySelectorAll('.table-editor').forEach(function(div) {
+                    div.classList.add('error');
+                });
+                return;
+            }
+            
+            var fallbackSrc = fallbacks[index];
+            console.log('Trying fallback path:', fallbackSrc);
+            
+            var script = document.createElement('script');
+            script.src = fallbackSrc;
+            script.onload = function() {
+                console.log('Successfully loaded fallback script:', fallbackSrc);
+                if (callback) callback();
+            };
+            script.onerror = function() {
+                console.error('Fallback failed:', fallbackSrc);
+                tryNextFallback(fallbacks, index + 1, callback);
             };
             document.body.appendChild(script);
         }

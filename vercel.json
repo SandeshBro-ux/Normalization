@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-XSS-Protection", "value": "1; mode=block" }
+      ]
+    },
+    {
+      "source": "/(.+\\.(js|css|jpg|jpeg|png|gif|svg|ico|webp))",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400, s-maxage=86400" }
+      ]
+    }
+  ]
+} 

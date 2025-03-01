@@ -4,7 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Learn Database Normalization</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <!-- Error handling for CSS loading -->
+    <script>
+        window.addEventListener('error', function(e) {
+            if (e.target.tagName === 'LINK' || e.target.tagName === 'SCRIPT') {
+                console.error('Failed to load resource:', e.target.src || e.target.href);
+                if (e.target.tagName === 'LINK') {
+                    // Try to load CSS again with fallback path
+                    var fallbackLink = document.createElement('link');
+                    fallbackLink.rel = 'stylesheet';
+                    fallbackLink.href = e.target.href.replace(/^\//, '');
+                    document.head.appendChild(fallbackLink);
+                }
+            }
+        }, true);
+    </script>
 </head>
 <body>
     <header>
@@ -222,8 +237,37 @@
         </div>
     </footer>
 
-    <script src="data/examples.js"></script>
-    <script src="js/tableEditor.js"></script>
-    <script src="js/main.js"></script>
+    <!-- Script loading with error handling -->
+    <script>
+        function loadScript(src, callback) {
+            var script = document.createElement('script');
+            script.src = src;
+            script.onload = callback;
+            script.onerror = function() {
+                console.error('Failed to load script:', src);
+                // Try fallback path without leading slash
+                var fallbackSrc = src.replace(/^\//, '');
+                if (fallbackSrc !== src) {
+                    console.log('Trying fallback path:', fallbackSrc);
+                    loadScript(fallbackSrc, callback);
+                } else {
+                    // Mark all table-editor divs as having an error
+                    document.querySelectorAll('.table-editor').forEach(function(div) {
+                        div.classList.add('error');
+                    });
+                }
+            };
+            document.body.appendChild(script);
+        }
+
+        // Load scripts in the correct order
+        loadScript('/data/examples.js', function() {
+            loadScript('/js/tableEditor.js', function() {
+                loadScript('/js/main.js', function() {
+                    console.log('All scripts loaded successfully!');
+                });
+            });
+        });
+    </script>
 </body>
 </html> 

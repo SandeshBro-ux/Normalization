@@ -109,6 +109,22 @@ section {
 .table-editor {
     overflow-x: auto;
     margin-bottom: 1.5rem;
+    min-height: 50px;
+    position: relative;
+}
+
+.table-editor:empty::before {
+    content: "Table loading...";
+    display: block;
+    padding: 20px;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+}
+
+.table-editor.error::before {
+    content: "Error loading table. Please refresh the page.";
+    color: var(--accent-color);
 }
 
 table {
